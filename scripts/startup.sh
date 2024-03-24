@@ -41,6 +41,8 @@ cd binutils-build
 make all install 2>&1 | tee /project/binutils-build-logs.log
 cd ..
 
+export PATH="$PATH:/opt/arm-none-eabi/bin"
+
 echo "********************************************************************************"
 echo "Building gcc stage1 ..."
 echo "********************************************************************************"
@@ -75,6 +77,8 @@ mkdir -p newlib-build
 cd newlib-build
 ../newlib-4.4.0.20231231/configure \
     --host=$HOST \
+    --target=arm-none-eabi \
+    --prefix=$PREFIX \
     --disable-newlib-supplied-syscalls \
     --disable-newlib-io-float \
     --disable-newlib-io-long-double \
@@ -100,9 +104,20 @@ make all install 2>&1 | tee /project/newlib-build-logs.log
 cd ..
 
 echo "********************************************************************************"
+echo "Building libstdc++ ..."
+echo "********************************************************************************"
+cd gcc-build
+../gcc-13.2.0/libstdc++/configure \
+    --prefix=$PREFIX \
+    --target=arm-none-eabi \
+    --with-sysroot=$PREFIX/arm-none-eabi 2>&1 | tee /project/libstdc++-config-logs.log
+
+make install 2>&1 | tee /project/libstdc++-build-logs.log
+cd ..
+
+echo "********************************************************************************"
 echo "Building gcc stage2 ..."
 echo "********************************************************************************"
-mkdir -p gcc-build
 cd gcc-build
 ../gcc-13.2.0/configure \
     --host=$HOST \
