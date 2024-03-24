@@ -24,14 +24,22 @@ RUN apt-get install -y libmpfr-dev
 RUN apt-get install -y libgmp3-dev
 RUN apt-get install -y libexpat-dev
 RUN apt-get install -y libdebuginfod-dev
+RUN apt-get install -y libpython3-dev
+RUN apt-get install -y python-is-python3
+RUN apt-get install -y libncurses5-dev
+RUN apt-get install -y diffutils
+RUN apt-get install -y pkg-config
+RUN apt-get install -y libsource-highlight-dev
+RUN apt-get install -y liblzma-dev
+RUN apt-get install -y libisl-dev
+RUN apt-get install -y libzstd-dev
+RUN apt-get install -y libbabeltrace-dev
 RUN apt-get install -y flex
 RUN apt-get install -y bison
 RUN apt-get install -y autoconf
 RUN apt-get install -y automake
 RUN apt-get install -y texinfo
 RUN apt-get install -y xz-utils
-RUN apt-get install -y python3
-RUN apt-get install -y python3-dev
 
 RUN mkdir /opt/arm-none-eabi
 RUN chown :user /opt/arm-none-eabi
