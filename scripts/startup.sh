@@ -3,22 +3,24 @@
 # https://gist.github.com/badcf00d/2f6054441375d9c94896aaa8e878ab4f
 
 PREFIX=/opt/arm-none-eabi
-HOST="86_64-pc-linux-gnu"
+HOST=x86_64-pc-linux-gnu
 
-echo "********************************************************************************"
-echo "Downloading source files ..."
-echo "********************************************************************************"
+rm /project/*.log
 
-mkdir -p toolchain
+#echo "********************************************************************************"
+#echo "Downloading source files ..."
+#echo "********************************************************************************"
+
+#mkdir -p toolchain
 cd toolchain
-wget https://gcc.gnu.org/ftp/gcc/releases/gcc-13.2.0/gcc-13.2.0.tar.xz -O ./gcc-13.2.0.tar.xz
-wget https://sourceware.org/pub/binutils/releases/binutils-2.42.tar.xz -O ./binutils-2.42.tar.xz
-wget ftp://sourceware.org/pub/newlib/newlib-4.4.0.20231231.tar.gz -O ./newlib-4.4.0.20231231.tar.gz
-wget https://ftp.gnu.org/gnu/gdb/gdb-14.2.tar.xz -O ./gdb-14.2.tar.xz
-tar -xf gcc-13.2.0.tar.xz
-tar -xf binutils-2.42.tar.xz
-tar -xzf newlib-4.4.0.20231231.tar.gz
-tar -xf gdb-14.2.tar.xz
+#wget https://gcc.gnu.org/ftp/gcc/releases/gcc-13.2.0/gcc-13.2.0.tar.xz -O ./gcc-13.2.0.tar.xz
+#wget https://sourceware.org/pub/binutils/releases/binutils-2.42.tar.xz -O ./binutils-2.42.tar.xz
+#wget ftp://sourceware.org/pub/newlib/newlib-4.4.0.20231231.tar.gz -O ./newlib-4.4.0.20231231.tar.gz
+#wget https://ftp.gnu.org/gnu/gdb/gdb-14.2.tar.xz -O ./gdb-14.2.tar.xz
+#tar -xf gcc-13.2.0.tar.xz
+#tar -xf binutils-2.42.tar.xz
+#tar -xzf newlib-4.4.0.20231231.tar.gz
+#tar -xf gdb-14.2.tar.xz
 
 echo "********************************************************************************"
 echo "Building binutils..."
@@ -30,7 +32,7 @@ cd binutils-build
     --host=$HOST \
     --prefix=$PREFIX \
     --enable-multilib \
-    --enable-lto
+    --enable-lto | tee /project/binutils-config-logs.log
 
 make all install 2>&1 | tee /project/binutils-build-logs.log
 cd ..
@@ -45,14 +47,12 @@ cd gcc-build
     --with-pkgversion=stage1-my-custom-$(date -I) \
     --prefix=$PREFIX \
     --host=$HOST \
-    --with-cpu=cortex-m4 \
     --enable-languages=c \
     --with-isl \
     --without-headers \
     --with-multilib-list=rmprofile \
     --with-newlib \
     --with-no-thumb-interwork \
-    --with-mode=thumb \
     --enable-lto \
     --enable-multiarch \
     --disable-libssp \
@@ -92,7 +92,7 @@ cd newlib-build
     --enable-newlib-global-atexit \
     --enable-lite-exit \
     --enable-newlib-reent-small \
-    --enable-target-optspace
+    --enable-target-optspace | tee /project/newlib-config-logs.log
 
 make all install 2>&1 | tee /project/newlib-build-logs.log
 cd ..
@@ -120,7 +120,7 @@ cd gcc-build
     --disable-threads \
     --disable-shared
 
-make all-gcc install-gcc 2>&1 | tee /project/gcc-build-withnewlib-logs.log
+make all-gcc install-gcc 2>&1 | tee /project/gcc-build-stage2-logs.log
 cd ..
 
 echo "********************************************************************************"
