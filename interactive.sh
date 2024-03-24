@@ -1,2 +1,2 @@
 #!/bin/sh
-docker run -it armembedded
+docker run -v $PWD/project:/project -it armembedded

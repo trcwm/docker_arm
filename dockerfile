@@ -5,7 +5,7 @@ FROM ubuntu:22.04
 ARG USER_ID
 ARG GROUP_ID
 
-WORKDIR /tmp
+#WORKDIR /tmp
 VOLUME ./project /project
 
 RUN addgroup --gid $GROUP_ID user
@@ -31,6 +31,7 @@ RUN apt-get install -y automake
 RUN apt-get install -y texinfo
 RUN apt-get install -y xz-utils
 RUN apt-get install -y python3
+RUN apt-get install -y python3-dev
 
 RUN mkdir /opt/arm-none-eabi
 RUN chown :user /opt/arm-none-eabi

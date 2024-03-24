@@ -16,7 +16,7 @@ echo "Building binutils..."
 mkdir -p binutils-build
 cd binutils-build
 ../binutils-2.42/configure --target=arm-none-eabi --prefix=/opt/arm-none-eabi --with-cpu=cortex-m4 --with-no-thumb-interwork --with-mode=thumb
-make all install 2>&1 | tee ./binutils-build-logs.log
+make all install 2>&1 | tee /project/binutils-build-logs.log
 cd ..
 
 echo "Building gcc..."
@@ -24,7 +24,7 @@ mkdir -p gcc-build
 cd gcc-build
 ../gcc-13.2.0/configure --target=arm-none-eabi --prefix=/opt/arm-none-eabi --with-cpu=cortex-m4 \
 --enable-languages=c,c++,lto --without-headers --with-newlib --with-no-thumb-interwork --with-mode=thumb
-make all-gcc install-gcc 2>&1 | tee ./gcc-build-withoutnewlib-logs.log
+make all-gcc install-gcc 2>&1 | tee /project/gcc-build-withoutnewlib-logs.log
 cd ..
 
 echo "Building newlib..."
@@ -32,7 +32,7 @@ mkdir -p newlib-build
 cd newlib-build
 ../newlib-4.4.0.20231231/configure --target=arm-none-eabi --prefix=/opt/arm-none-eabi \
 --disable-newlib-supplied-syscalls
-make all install 2>&1 | tee ./newlib-build-logs.log
+make all install 2>&1 | tee /project/newlib-build-logs.log
 cd ..
 
 echo "Building gcc with newlib..."
@@ -40,7 +40,7 @@ mkdir -p gcc-build
 cd gcc-build
 ../gcc-13.2.0/configure --target=arm-none-eabi --prefix=/opt/arm-none-eabi --with-cpu=cortex-m4 \
 --enable-languages=c,c++,lto --without-headers --with-newlib --with-no-thumb-interwork --with-mode=thumb
-make all-gcc install-gcc 2>&1 | tee ./gcc-build-withnewlib-logs.log
+make all-gcc install-gcc 2>&1 | tee /project/gcc-build-withnewlib-logs.log
 cd ..
 
 echo "Building gdb with python"
@@ -48,5 +48,8 @@ mkdir -p gdb-build
 cd gdb-build
 ../gdb-14.2/configure --target=arm-none-eabi --prefix=/opt/arm-none-eabi \
 --with-python=/usr/bin/python3
-make all install 2>&1 | tee ./gdb-build-logs.log
+make all install 2>&1 | tee /project/gdb-build-logs.log
 cd ..
+
+mkdir -p /project/opt
+cp -r /opt/* /project/opt/
