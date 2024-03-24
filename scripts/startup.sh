@@ -1,6 +1,9 @@
 #!/bin/sh
 # https://www.linkedin.com/pulse/cross-compiling-gcc-toolchain-arm-cortex-m-processors-ijaz-ahmad
 # https://gist.github.com/badcf00d/2f6054441375d9c94896aaa8e878ab4f
+# https://wiki.osdev.org/Hosted_GCC_Cross-Compiler
+# https://wiki.osdev.org/Cross-Porting_Software
+
 
 PREFIX=/opt/arm-none-eabi
 HOST=x86_64-pc-linux-gnu
@@ -32,7 +35,8 @@ cd binutils-build
     --host=$HOST \
     --prefix=$PREFIX \
     --enable-multilib \
-    --enable-lto | tee /project/binutils-config-logs.log
+    --with-sysroot=$PREFIX/arm-none-eabi \
+    --enable-lto 2>&1 | tee /project/binutils-config-logs.log
 
 make all install 2>&1 | tee /project/binutils-build-logs.log
 cd ..
@@ -59,7 +63,7 @@ cd gcc-build
     --disable-nls \
     --disable-tls \
     --disable-threads \
-    --disable-shared
+    --disable-shared  2>&1 | tee /project/gcc-config-stage1-logs.log
 
 make all-gcc install-gcc 2>&1 | tee /project/gcc-build-stage1-logs.log
 cd ..
@@ -71,8 +75,6 @@ mkdir -p newlib-build
 cd newlib-build
 ../newlib-4.4.0.20231231/configure \
     --host=$HOST \
-    --target=arm-none-eabi \
-    --prefix=$PREFIX \
     --disable-newlib-supplied-syscalls \
     --disable-newlib-io-float \
     --disable-newlib-io-long-double \
@@ -92,7 +94,7 @@ cd newlib-build
     --enable-newlib-global-atexit \
     --enable-lite-exit \
     --enable-newlib-reent-small \
-    --enable-target-optspace | tee /project/newlib-config-logs.log
+    --enable-target-optspace 2>&1 | tee /project/newlib-config-logs.log
 
 make all install 2>&1 | tee /project/newlib-build-logs.log
 cd ..
@@ -118,7 +120,7 @@ cd gcc-build
     --disable-nls \
     --disable-tls \
     --disable-threads \
-    --disable-shared
+    --disable-shared 2>&1 | tee /project/gcc-config-stage2-logs.log
 
 make all-gcc install-gcc 2>&1 | tee /project/gcc-build-stage2-logs.log
 cd ..
@@ -142,7 +144,7 @@ cd gdb-build
     --enable-source-highlight \
     --disable-werror \
     --disable-nls \
-    --disable-warn-rwx-segments
+    --disable-warn-rwx-segments 2>&1 | tee /project/gdb-config-logs.log
 
 make all install 2>&1 | tee /project/gdb-build-logs.log
 cd ..
