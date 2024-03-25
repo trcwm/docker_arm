@@ -104,18 +104,6 @@ make all install 2>&1 | tee /project/newlib-build-logs.log
 cd ..
 
 echo "********************************************************************************"
-echo "Building libstdc++ ..."
-echo "********************************************************************************"
-cd gcc-build
-../gcc-13.2.0/libstdc++/configure \
-    --prefix=$PREFIX \
-    --target=arm-none-eabi \
-    --with-sysroot=$PREFIX/arm-none-eabi 2>&1 | tee /project/libstdc++-config-logs.log
-
-make install 2>&1 | tee /project/libstdc++-build-logs.log
-cd ..
-
-echo "********************************************************************************"
 echo "Building gcc stage2 ..."
 echo "********************************************************************************"
 cd gcc-build
@@ -141,12 +129,28 @@ make all-gcc install-gcc 2>&1 | tee /project/gcc-build-stage2-logs.log
 cd ..
 
 echo "********************************************************************************"
+echo "Building libstdc++ ..."
+echo "********************************************************************************"
+mkdir -p gcc-libstdcpp
+cd gcc-libstdcpp
+../gcc-13.2.0/libstdc++-v3/configure \
+    --host=$HOST \
+    --prefix=$PREFIX \
+    --with-newlib \
+    --target=arm-none-eabi 2>&1 | tee /project/libstdc++-config-logs.log
+
+make install 2>&1 | tee /project/libstdc++-build-logs.log
+cd ..
+
+echo "********************************************************************************"
 echo "Building gdb with python"
 echo "********************************************************************************"
 mkdir -p gdb-build
 cd gdb-build
-../gdb-14.2/configure --target=arm-none-eabi \
-    --prefix=/opt/arm-none-eabi \
+../gdb-14.2/configure \
+    --target=arm-none-eabi \
+    --host=$HOST \
+    --prefix=$PREFIX \
     --with-python=/usr/bin/python3 \
     --with-expat \
     --with-lzma \
